@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帮助中心 - 校园智能快递代取系统</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            background-color: #f5f7fa;
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-link.active {
+            color: var(--primary-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            padding: 0.5rem 1rem;
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .main-content {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .page-title {
+            color: var(--secondary-color);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .help-section {
+            margin-bottom: 3rem;
+        }
+
+        .help-section h3 {
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .faq-list {
+            list-style: none;
+        }
+
+        .faq-item {
+            margin-bottom: 1.5rem;
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 1rem;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+
+        .faq-question:hover {
+            background-color: #e9ecef;
+        }
+
+        .faq-answer {
+            padding: 1rem;
+            display: none;
+            border-top: 1px solid #e1e1e1;
+            color: #666;
+        }
+
+        .faq-answer.active {
+            display: block;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact-card {
+            padding: 1.5rem;
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .contact-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .contact-title {
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-detail {
+            color: #666;
+        }
+
+        .guide-steps {
+            counter-reset: step;
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .guide-step {
+            position: relative;
+            padding-left: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .guide-step::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2rem;
+            height: 2rem;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .search-box {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            outline: none;
+        }
+
+        .search-btn {
+            padding: 0.8rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            background: #357abd;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">校园智能快递代取系统</div>
+        <div class="nav-links">
+            <a href="home.html" class="nav-link">首页</a>
+            <a href="orders.html" class="nav-link">订单管理</a>
+            <div class="user-info">
+                欢迎, <span id="username">管理员</span>
+                <button onclick="logout()" class="logout-btn">退出登录</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <h2 class="page-title">帮助中心</h2>
+
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="搜索帮助内容..." id="searchInput">
+            <button class="search-btn" onclick="searchHelp()">搜索</button>
+        </div>
+
+        <div class="help-section">
+            <h3>快速入门指南</h3>
+            <ol class="guide-steps">
+                <li class="guide-step">
+                    <h4>注册登录</h4>
+                    <p>使用学号/工号和密码登录系统，首次使用需要完成实名认证。</p>
+                </li>
+                <li class="guide-step">
+                    <h4>下单流程</h4>
+                    <p>在首页点击"快速下单"，填写快递信息，选择取件地点和送达地址。</p>
+                </li>
+                <li class="guide-step">
+                    <h4>订单跟踪</h4>
+                    <p>在"订单管理"页面可以实时查看订单状态，跟踪快递位置。</p>
+                </li>
+                <li class="guide-step">
+                    <h4>确认收货</h4>
+                    <p>收到快递后，请及时确认收货并对服务进行评价。</p>
+                </li>
+            </ol>
+        </div>
+
+        <div class="help-section">
+            <h3>常见问题</h3>
+            <ul class="faq-list" id="faqList">
+                <!-- FAQ列表将通过JavaScript动态生成 -->
+            </ul>
+        </div>
+
+        <div class="help-section">
+            <h3>联系我们</h3>
+            <div class="contact-info">
+                <div class="contact-card">
+                    <div class="contact-icon">📞</div>
+                    <div class="contact-title">客服热线</div>
+                    <div class="contact-detail">400-123-4567</div>
+                    <div class="contact-detail">工作时间：9:00-21:00</div>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">✉️</div>
+                    <div class="contact-title">电子邮箱</div>
+                    <div class="contact-detail">support@example.com</div>
+                    <div class="contact-detail">24小时内回复</div>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">💬</div>
+                    <div class="contact-title">在线客服</div>
+                    <div class="contact-detail">点击右下角对话框</div>
+                    <div class="contact-detail">在线时间：8:00-22:00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 检查登录状态
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('isLoggedIn')) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // 显示用户名
+            const username = localStorage.getItem('username');
+            if (username) {
+                document.getElementById('username').textContent = username;
+            }
+
+            // 加载FAQ列表
+            loadFAQ();
+        });
+
+        // FAQ数据
+        const faqData = [
+            {
+                question: '如何修改收货地址？',
+                answer: '在订单详情页面点击"修改地址"按钮，输入新的收货地址并保存即可。注意：订单状态为"待接单"时才可以修改地址。'
+            },
+            {
+                question: '快递丢失了怎么办？',
+                answer: '如果快递丢失，请立即联系客服。我们会第一时间核实情况，并根据快递的保价金额进行赔付。建议在下单时选择保价服务。'
+            },
+            {
+                question: '如何申请退款？',
+                answer: '在订单详情页面点击"申请退款"按钮，选择退款原因并提交。退款申请将在24小时内处理，退款金额将原路返回。'
+            },
+            {
+                question: '可以指定快递员吗？',
+                answer: '目前系统采用智能派单机制，暂不支持指定快递员。但您可以在订单备注中说明特殊需求，我们会尽量安排。'
+            },
+            {
+                question: '订单延迟送达怎么处理？',
+                answer: '如果订单超过预计送达时间，系统会自动发送道歉短信并提供补偿方案。您也可以联系客服进行反馈。'
+            }
+        ];
+
+        // 加载FAQ列表
+        function loadFAQ() {
+            const faqList = document.getElementById('faqList');
+            
+            faqList.innerHTML = faqData.map((faq, index) => `
+                <li class="faq-item">
+                    <div class="faq-question" onclick="toggleAnswer(${index})">
+                        ${faq.question}
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="faq-answer" id="answer${index}">
+                        ${faq.answer}
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        // 切换FAQ答案显示/隐藏
+        function toggleAnswer(index) {
+            const answer = document.getElementById(`answer${index}`);
+            answer.classList.toggle('active');
+        }
+
+        // 搜索帮助内容
+        function searchHelp() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const faqItems = document.querySelectorAll('.faq-item');
+
+            faqItems.forEach((item, index) => {
+                const question = item.querySelector('.faq-question').textContent.toLowerCase();
+                const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+
+                if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                    item.style.display = 'block';
+                    // 显示匹配的答案
+                    document.getElementById(`answer${index}`).classList.add('active');
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // 退出登录
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html> 

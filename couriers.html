@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快递员管理 - 校园智能快递代取系统</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            background-color: #f5f7fa;
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-link.active {
+            color: var(--primary-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            padding: 0.5rem 1rem;
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .page-title {
+            color: var(--secondary-color);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .add-courier-btn {
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .add-courier-btn:hover {
+            background-color: #357abd;
+            transform: translateY(-2px);
+        }
+
+        .courier-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .courier-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .courier-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .courier-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: block;
+            background-color: #e1e1e1;
+            object-fit: cover;
+        }
+
+        .courier-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .courier-info {
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+
+        .courier-status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .status-active {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-inactive {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: white;
+            margin: 10% auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 10px;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            outline: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #357abd;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">校园智能快递代取系统</div>
+        <div class="nav-links">
+            <a href="home.html" class="nav-link">首页</a>
+            <a href="orders.html" class="nav-link">订单管理</a>
+            <div class="user-info">
+                欢迎, <span id="username">管理员</span>
+                <button onclick="logout()" class="logout-btn">退出登录</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="page-title">
+            <h2>快递员管理</h2>
+            <button class="add-courier-btn" onclick="openModal()">添加快递员</button>
+        </div>
+
+        <div class="courier-grid" id="courierGrid">
+            <!-- 快递员卡片将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <!-- 添加快递员模态框 -->
+    <div class="modal" id="addCourierModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3>添加快递员</h3>
+            <form id="addCourierForm">
+                <div class="form-group">
+                    <label for="name">姓名</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">联系电话</label>
+                    <input type="tel" id="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="idNumber">身份证号</label>
+                    <input type="text" id="idNumber" required>
+                </div>
+                <div class="form-group">
+                    <label for="workArea">工作区域</label>
+                    <input type="text" id="workArea" required>
+                </div>
+                <button type="submit" class="submit-btn">提交</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 检查登录状态
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('isLoggedIn')) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // 显示用户名
+            const username = localStorage.getItem('username');
+            if (username) {
+                document.getElementById('username').textContent = username;
+            }
+
+            // 加载快递员数据
+            loadCouriers();
+        });
+
+        // 模拟快递员数据
+        const mockCouriers = [
+            {
+                id: 1,
+                name: '张三',
+                phone: '13800138000',
+                workArea: '校区东区',
+                status: 'active',
+                deliveryCount: 156,
+                rating: 4.8
+            },
+            {
+                id: 2,
+                name: '李四',
+                phone: '13900139000',
+                workArea: '校区西区',
+                status: 'active',
+                deliveryCount: 98,
+                rating: 4.6
+            },
+            {
+                id: 3,
+                name: '王五',
+                phone: '13700137000',
+                workArea: '校区南区',
+                status: 'inactive',
+                deliveryCount: 45,
+                rating: 4.3
+            }
+        ];
+
+        // 加载快递员数据
+        function loadCouriers() {
+            const courierGrid = document.getElementById('courierGrid');
+            const couriers = JSON.parse(localStorage.getItem('couriers')) || mockCouriers;
+
+            courierGrid.innerHTML = couriers.map(courier => `
+                <div class="courier-card">
+                    <img src="https://via.placeholder.com/80" alt="${courier.name}" class="courier-avatar">
+                    <h3 class="courier-name">${courier.name}</h3>
+                    <div class="courier-info">联系电话: ${courier.phone}</div>
+                    <div class="courier-info">工作区域: ${courier.workArea}</div>
+                    <div class="courier-info">配送订单: ${courier.deliveryCount}单</div>
+                    <div class="courier-info">评分: ${courier.rating}分</div>
+                    <div class="courier-status ${courier.status === 'active' ? 'status-active' : 'status-inactive'}">
+                        ${courier.status === 'active' ? '在岗' : '休息中'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 打开模态框
+        function openModal() {
+            document.getElementById('addCourierModal').style.display = 'block';
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('addCourierModal').style.display = 'none';
+        }
+
+        // 处理添加快递员表单提交
+        document.getElementById('addCourierForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newCourier = {
+                id: Date.now(),
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                workArea: document.getElementById('workArea').value,
+                status: 'active',
+                deliveryCount: 0,
+                rating: 5.0
+            };
+
+            // 获取现有快递员数据
+            let couriers = JSON.parse(localStorage.getItem('couriers')) || mockCouriers;
+            
+            // 添加新快递员
+            couriers.push(newCourier);
+            
+            // 保存数据
+            localStorage.setItem('couriers', JSON.stringify(couriers));
+
+            // 重新加载快递员列表
+            loadCouriers();
+
+            // 关闭模态框
+            closeModal();
+
+            // 重置表单
+            e.target.reset();
+        });
+
+        // 退出登录
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            window.location.href = 'index.html';
+        }
+
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('addCourierModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html> 

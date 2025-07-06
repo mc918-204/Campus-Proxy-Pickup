@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单管理 - 校园智能快递代取系统</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+            --background-color: #f5f5f5;
+            --text-color: #333333;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .welcome-text {
+            color: white;
+        }
+
+        .logout-button {
+            background-color: transparent;
+            border: 2px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-button:hover {
+            background-color: white;
+            color: var(--primary-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .order-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .add-order-btn {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .add-order-btn:hover {
+            transform: translateY(-2px);
+            background-color: #27ae60;
+        }
+
+        .orders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease-out;
+            border-left: 4px solid transparent;
+        }
+
+        .order-card[data-status="pending"] {
+            border-left-color: var(--warning-color);
+        }
+
+        .order-card[data-status="processing"] {
+            border-left-color: var(--primary-color);
+        }
+
+        .order-card[data-status="completed"] {
+            border-left-color: var(--success-color);
+        }
+
+        .order-card[data-status="cancelled"] {
+            border-left-color: var(--danger-color);
+        }
+
+        .order-card[data-status="delayed"] {
+            border-left-color: #95a5a6;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .order-number {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .order-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .order-status::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            to {
+                left: 100%;
+            }
+        }
+
+        .status-pending {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .status-processing {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .status-completed {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-cancelled {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .status-delayed {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .order-details {
+            margin-bottom: 15px;
+        }
+
+        .order-details p {
+            margin: 8px 0;
+            color: #666;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .order-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .order-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .order-btn:hover::after {
+            width: 200px;
+            height: 200px;
+        }
+
+        .order-btn:active {
+            transform: scale(0.95);
+        }
+
+        .edit-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background-color: #357abd;
+        }
+
+        .delete-btn {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: translateY(-20px);
+            opacity: 0;
+            animation: slideInDown 0.5s ease-out forwards;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--secondary-color);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #357abd;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .order-controls {
+                flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .add-order-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>订单管理系统</h1>
+            <nav class="navbar">
+                <div class="nav-brand">校园智能快递代取系统</div>
+                <div class="nav-links">
+                    <a href="home.html" class="nav-link">首页</a>
+                    <a href="orders.html" class="nav-link active">订单管理</a>
+                    <div class="user-info">
+                        欢迎, <span id="username">管理员</span>
+                        <button onclick="logout()" class="logout-btn">退出登录</button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="order-controls">
+            <div class="search-box">
+                <input type="text" placeholder="搜索订单..." onkeyup="searchOrders(this.value)">
+            </div>
+            <button class="add-order-btn" onclick="showAddOrderModal()">新增订单</button>
+        </div>
+
+        <div class="orders-grid" id="ordersContainer">
+            <!-- 订单卡片将通过 JavaScript 动态生成 -->
+        </div>
+    </div>
+
+    <!-- 新增/编辑订单模态框 -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">新增订单</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="orderForm" onsubmit="handleOrderSubmit(event)">
+                <div class="form-group">
+                    <label for="expressCompany">快递公司</label>
+                    <input type="text" id="expressCompany" required placeholder="请输入快递公司">
+                </div>
+                <div class="form-group">
+                    <label for="pickupLocation">取件地点</label>
+                    <input type="text" id="pickupLocation" required placeholder="请输入取件地点">
+                </div>
+                <div class="form-group">
+                    <label for="deliveryAddress">送达地址</label>
+                    <input type="text" id="deliveryAddress" required placeholder="请输入送达地址">
+                </div>
+                <div class="form-group">
+                    <label for="orderStatus">订单状态</label>
+                    <select id="orderStatus" required>
+                        <option value="pending">待处理</option>
+                        <option value="processing">处理中</option>
+                        <option value="completed">已完成</option>
+                        <option value="cancelled">已取消</option>
+                        <option value="delayed">已延迟</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">提交</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 添加评分模态框HTML -->
+    <div class="modal" id="ratingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>评价订单</h2>
+                <button class="close-modal" onclick="closeRatingModal()">&times;</button>
+            </div>
+            <form id="ratingForm" onsubmit="handleRatingSubmit(event)">
+                <div class="form-group">
+                    <label>评分</label>
+                    <div class="rating-stars">
+                        <span class="star" data-rating="1">★</span>
+                        <span class="star" data-rating="2">★</span>
+                        <span class="star" data-rating="3">★</span>
+                        <span class="star" data-rating="4">★</span>
+                        <span class="star" data-rating="5">★</span>
+                    </div>
+                    <input type="hidden" id="ratingValue" required>
+                </div>
+                <div class="form-group">
+                    <label for="ratingComment">评价内容</label>
+                    <textarea id="ratingComment" rows="4" placeholder="请输入您的评价内容"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">提交评价</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 添加评分相关样式 -->
+    <style>
+        .rating-stars {
+            display: flex;
+            gap: 10px;
+            font-size: 24px;
+            margin: 10px 0;
+        }
+
+        .star {
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .star.active {
+            color: #f1c40f;
+        }
+
+        .star:hover,
+        .star:hover ~ .star {
+            color: #f1c40f;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+    </style>
+
+    <script>
+        // 检查登录状态
+        function checkLogin() {
+            if (localStorage.getItem('isLoggedIn') !== 'true') {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // 处理退出登录
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            window.location.href = 'index.html';
+        }
+
+        // 更新模拟订单数据
+        let orders = [
+            {
+                id: 'EX20240001',
+                number: 'EX20240001',
+                status: 'completed',
+                expressCompany: '顺丰快递',
+                pickupLocation: '第一快递站',
+                deliveryAddress: '理工大学生活区A栋101室',
+                createTime: '2024-01-20 10:30',
+                updateTime: '2024-01-20 11:45',
+                packageInfo: '图书 2kg',
+                contactPhone: '138****1234',
+                deliveryTime: '2024-01-20 11:45',
+                rating: 5,
+                comment: '送货速度很快，快递员服务态度特别好！包装完好无损。'
+            },
+            {
+                id: 'EX20240002',
+                number: 'EX20240002',
+                status: 'processing',
+                expressCompany: '圆通快递',
+                pickupLocation: '第二快递站',
+                deliveryAddress: '理工大学教学楼B座202室',
+                createTime: '2024-01-20 11:45',
+                updateTime: '2024-01-20 12:30',
+                packageInfo: '电子产品 1.5kg',
+                contactPhone: '139****5678',
+                estimatedDelivery: '2024-01-20 14:30'
+            },
+            {
+                id: 'EX20240003',
+                number: 'EX20240003',
+                status: 'pending',
+                expressCompany: '中通快递',
+                pickupLocation: '第三快递站',
+                deliveryAddress: '理工大学图书馆C区303室',
+                createTime: '2024-01-20 14:20',
+                packageInfo: '服装 0.8kg',
+                contactPhone: '137****9012',
+                estimatedDelivery: '2024-01-20 16:30'
+            },
+            {
+                id: 'EX20240004',
+                number: 'EX20240004',
+                status: 'cancelled',
+                expressCompany: '韵达快递',
+                pickupLocation: '第一快递站',
+                deliveryAddress: '理工大学实验楼D区404室',
+                createTime: '2024-01-20 15:10',
+                updateTime: '2024-01-20 15:40',
+                packageInfo: '文件 0.3kg',
+                contactPhone: '135****3456',
+                cancelReason: '收件人临时取消'
+            },
+            {
+                id: 'EX20240005',
+                number: 'EX20240005',
+                status: 'delayed',
+                expressCompany: '申通快递',
+                pickupLocation: '第二快递站',
+                deliveryAddress: '理工大学食堂E区505室',
+                createTime: '2024-01-20 16:30',
+                updateTime: '2024-01-20 17:15',
+                packageInfo: '食品 3kg',
+                contactPhone: '136****7890',
+                delayReason: '天气原因',
+                newEstimatedDelivery: '2024-01-21 10:00'
+            },
+            {
+                id: 'EX20240006',
+                number: 'EX20240006',
+                status: 'completed',
+                expressCompany: '顺丰快递',
+                pickupLocation: '第三快递站',
+                deliveryAddress: '理工大学宿舍楼F栋606室',
+                createTime: '2024-01-20 17:45',
+                updateTime: '2024-01-20 18:30',
+                packageInfo: '日用品 2.5kg',
+                contactPhone: '133****4567',
+                deliveryTime: '2024-01-20 18:30',
+                rating: 4,
+                comment: '配送及时，快递员很专业，包装完整。'
+            }
+        ];
+
+        // 获取状态对应的类名
+        function getStatusClass(status) {
+            const statusMap = {
+                'pending': 'status-pending',
+                'processing': 'status-processing',
+                'completed': 'status-completed',
+                'cancelled': 'status-cancelled',
+                'delayed': 'status-delayed'
+            };
+            return statusMap[status] || 'status-pending';
+        }
+
+        // 获取状态对应的文本
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': '待处理',
+                'processing': '处理中',
+                'completed': '已完成',
+                'cancelled': '已取消',
+                'delayed': '已延迟'
+            };
+            return statusMap[status] || '未知状态';
+        }
+
+        // 更新渲染订单列表函数
+        function renderOrders(ordersList = orders) {
+            const container = document.getElementById('ordersContainer');
+            container.innerHTML = '';
+
+            ordersList.forEach(order => {
+                const card = document.createElement('div');
+                card.className = 'order-card';
+                card.setAttribute('data-status', order.status);
+                
+                let statusInfo = '';
+                if (order.status === 'completed') {
+                    statusInfo = `<p>送达时间：${order.deliveryTime}</p>`;
+                } else if (order.status === 'processing' || order.status === 'pending') {
+                    statusInfo = `<p>预计送达：${order.estimatedDelivery}</p>`;
+                } else if (order.status === 'cancelled') {
+                    statusInfo = `<p>取消原因：${order.cancelReason}</p>`;
+                } else if (order.status === 'delayed') {
+                    statusInfo = `
+                        <p>延迟原因：${order.delayReason}</p>
+                        <p>新预计送达：${order.newEstimatedDelivery}</p>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="order-header">
+                        <span class="order-number">${order.number || '暂无单号'}</span>
+                        <span class="order-status ${getStatusClass(order.status)}">${getStatusText(order.status)}</span>
+                    </div>
+                    <div class="order-details">
+                        <p>快递公司：${order.expressCompany || '暂无信息'}</p>
+                        <p>取件地点：${order.pickupLocation || '暂无信息'}</p>
+                        <p>送达地址：${order.deliveryAddress || '暂无信息'}</p>
+                        <p>包裹信息：${order.packageInfo || '暂无信息'}</p>
+                        <p>联系电话：${order.contactPhone || '暂无信息'}</p>
+                        <p>创建时间：${order.createTime || '暂无信息'}</p>
+                        ${order.updateTime ? `<p>更新时间：${order.updateTime}</p>` : ''}
+                        ${statusInfo}
+                        ${order.rating ? `
+                        <div class="rating-display">
+                            <p>评分：${'★'.repeat(order.rating)}${'☆'.repeat(5-order.rating)}</p>
+                            <p>评价：${order.comment || '暂无评价'}</p>
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div class="order-actions">
+                        <button class="order-btn edit-btn" onclick="editOrder(${order.id})">
+                            <span class="btn-icon">✏️</span>编辑
+                        </button>
+                        <button class="order-btn delete-btn" onclick="deleteOrder(${order.id})">
+                            <span class="btn-icon">🗑️</span>删除
+                        </button>
+                        ${order.status === 'completed' && !order.rating ? `
+                        <button class="order-btn rate-btn" onclick="showRatingModal(${order.id})">
+                            <span class="btn-icon">⭐</span>评价
+                        </button>
+                        ` : ''}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 搜索订单
+        function searchOrders(keyword) {
+            const filteredOrders = orders.filter(order => 
+                order.number.toLowerCase().includes(keyword.toLowerCase()) ||
+                order.expressCompany.toLowerCase().includes(keyword.toLowerCase()) ||
+                order.pickupLocation.toLowerCase().includes(keyword.toLowerCase()) ||
+                order.deliveryAddress.toLowerCase().includes(keyword.toLowerCase())
+            );
+            renderOrders(filteredOrders);
+        }
+
+        // 显示新增订单模态框
+        function showAddOrderModal() {
+            document.getElementById('modalTitle').textContent = '新增订单';
+            document.getElementById('orderForm').reset();
+            document.getElementById('orderModal').classList.add('active');
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('orderModal').classList.remove('active');
+        }
+
+        // 编辑订单
+        function editOrder(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                document.getElementById('modalTitle').textContent = '编辑订单';
+                document.getElementById('expressCompany').value = order.expressCompany;
+                document.getElementById('pickupLocation').value = order.pickupLocation;
+                document.getElementById('deliveryAddress').value = order.deliveryAddress;
+                document.getElementById('orderStatus').value = order.status;
+                document.getElementById('orderForm').dataset.orderId = orderId;
+                document.getElementById('orderModal').classList.add('active');
+            }
+        }
+
+        // 删除订单
+        function deleteOrder(orderId) {
+            if (confirm('确定要删除这个订单吗？')) {
+                orders = orders.filter(order => order.id !== orderId);
+                renderOrders();
+            }
+        }
+
+        // 处理订单提交
+        function handleOrderSubmit(event) {
+            event.preventDefault();
+            const formData = {
+                expressCompany: document.getElementById('expressCompany').value,
+                pickupLocation: document.getElementById('pickupLocation').value,
+                deliveryAddress: document.getElementById('deliveryAddress').value,
+                status: document.getElementById('orderStatus').value
+            };
+
+            const orderId = document.getElementById('orderForm').dataset.orderId;
+            if (orderId) {
+                // 编辑现有订单
+                const index = orders.findIndex(o => o.id === parseInt(orderId));
+                if (index !== -1) {
+                    orders[index] = {
+                        ...orders[index],
+                        ...formData,
+                        updateTime: new Date().toLocaleString()
+                    };
+                }
+            } else {
+                // 新增订单
+                const newOrder = {
+                    id: Math.max(...orders.map(o => o.id), 0) + 1,
+                    number: `EX${new Date().getTime()}`,
+                    createTime: new Date().toLocaleString(),
+                    ...formData
+                };
+                orders.push(newOrder);
+            }
+
+            localStorage.setItem('orders', JSON.stringify(orders));
+            renderOrders();
+            closeModal();
+        }
+
+        // 页面加载时检查登录状态并渲染订单列表
+        window.onload = function() {
+            checkLogin();
+            const savedOrders = localStorage.getItem('orders');
+            if (!savedOrders) {
+                // 如果localStorage中没有数据，使用默认数据并保存
+                localStorage.setItem('orders', JSON.stringify(orders));
+            } else {
+                orders = JSON.parse(savedOrders);
+            }
+            renderOrders();
+        };
+
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('orderModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+    </script>
+</body>
+</html> 

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统详情 - 校园智能快递代取系统</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #2c3e50;
+            --background-color: #f5f7fa;
+            --text-color: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            padding: 0.5rem 1rem;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            color: var(--secondary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .section-content {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-content ul {
+            list-style-position: inside;
+            margin-left: 1rem;
+        }
+
+        .section-content li {
+            margin: 0.5rem 0;
+        }
+
+        .image-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .image-wrapper {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .image-wrapper:hover {
+            transform: translateY(-5px);
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .image-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+
+        .image-wrapper:hover .image-caption {
+            transform: translateY(0);
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 2rem;
+            transition: background-color 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #357abd;
+        }
+
+        @media (max-width: 768px) {
+            .image-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">校园智能快递代取系统</div>
+        <div class="nav-links">
+            <a href="home.html" class="nav-link">首页</a>
+            <a href="orders.html" class="nav-link">订单管理</a>
+            <div class="user-info">
+                欢迎, <span id="username">管理员</span>
+                <button onclick="logout()" class="logout-btn">退出登录</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <a href="home.html" class="back-btn">← 返回首页</a>
+
+        <div class="section">
+            <h2 class="section-title">系统需求分析</h2>
+            <div class="section-content">
+                <p>校园智能快递代取系统旨在解决以下问题：</p>
+                <ul>
+                    <li>学生因课程繁忙无暇取件的困扰</li>
+                    <li>快递服务时间与学生作息时间不匹配的问题</li>
+                    <li>提供便捷的快递代取服务平台</li>
+                    <li>实现智能化的快递分配和管理</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">系统功能描述</h2>
+            <div class="section-content">
+                <p>系统主要包含以下功能模块：</p>
+                <ul>
+                    <li>用户注册与登录：支持学生用户和代取员注册</li>
+                    <li>订单管理：发布代取订单、查看订单状态</li>
+                    <li>智能派单：系统自动分配最优代取员</li>
+                    <li>支付系统：安全便捷的支付功能</li>
+                    <li>评价系统：服务评价和信用评分</li>
+                    <li>实时通知：订单状态实时推送</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">系统流程图</h2>
+            <div class="image-container">
+                <div class="image-wrapper">
+                    <img src="6606d15a6202590bc5b4ab36969085c.png" alt="系统用例图">
+                    <div class="image-caption">系统用例图</div>
+                </div>
+                <div class="image-wrapper">
+                    <img src="bd7b0f06701dbc5e7a59d19cfcd0772.png" alt="系统流程图">
+                    <div class="image-caption">系统流程图</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">如何运行应用</h2>
+            <div class="section-content">
+                <p>本系统采用Web应用架构，运行步骤如下：</p>
+                <ol>
+                    <li>确保您的设备已连接到互联网</li>
+                    <li>打开浏览器（推荐使用Chrome、Firefox等现代浏览器）</li>
+                    <li>访问系统网址</li>
+                    <li>根据身份选择注册为普通用户或代取员</li>
+                    <li>完成注册后即可使用系统提供的各项功能</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 检查登录状态
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('isLoggedIn')) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // 显示用户名
+            const username = localStorage.getItem('username');
+            if (username) {
+                document.getElementById('username').textContent = username;
+            }
+        });
+
+        // 退出登录
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html> 

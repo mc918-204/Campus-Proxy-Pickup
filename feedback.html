@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户反馈 - 校园智能快递代取系统</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            background-color: #f5f7fa;
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-link.active {
+            color: var(--primary-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logout-btn {
+            padding: 0.5rem 1rem;
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .main-content {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .page-title {
+            color: var(--secondary-color);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .feedback-form {
+            margin-top: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            outline: none;
+        }
+
+        .rating-group {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .rating-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: 2px solid #e1e1e1;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .rating-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .rating-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #357abd;
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        .success-message {
+            display: none;
+            background: var(--success-color);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .feedback-list {
+            margin-top: 3rem;
+        }
+
+        .feedback-item {
+            padding: 1.5rem;
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            background: white;
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .feedback-user {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .feedback-date {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .feedback-rating {
+            color: var(--warning-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .feedback-content {
+            color: #444;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">校园智能快递代取系统</div>
+        <div class="nav-links">
+            <a href="home.html" class="nav-link">首页</a>
+            <a href="orders.html" class="nav-link">订单管理</a>
+            <div class="user-info">
+                欢迎, <span id="username">管理员</span>
+                <button onclick="logout()" class="logout-btn">退出登录</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <h2 class="page-title">用户反馈</h2>
+        <div class="success-message" id="successMessage">感谢您的反馈！</div>
+
+        <form class="feedback-form" id="feedbackForm">
+            <div class="form-group">
+                <label for="orderNumber">订单号</label>
+                <input type="text" id="orderNumber" required placeholder="请输入相关订单号">
+            </div>
+
+            <div class="form-group">
+                <label>服务评分</label>
+                <div class="rating-group" id="ratingGroup">
+                    <button type="button" class="rating-btn" data-rating="1">1分</button>
+                    <button type="button" class="rating-btn" data-rating="2">2分</button>
+                    <button type="button" class="rating-btn" data-rating="3">3分</button>
+                    <button type="button" class="rating-btn" data-rating="4">4分</button>
+                    <button type="button" class="rating-btn" data-rating="5">5分</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="feedbackType">反馈类型</label>
+                <select id="feedbackType" required>
+                    <option value="">请选择反馈类型</option>
+                    <option value="service">服务态度</option>
+                    <option value="speed">配送速度</option>
+                    <option value="safety">包裹安全</option>
+                    <option value="other">其他</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="feedbackContent">反馈内容</label>
+                <textarea id="feedbackContent" rows="5" required placeholder="请详细描述您的反馈意见"></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">提交反馈</button>
+        </form>
+
+        <div class="feedback-list" id="feedbackList">
+            <!-- 反馈列表将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <script>
+        // 检查登录状态
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('isLoggedIn')) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // 显示用户名
+            const username = localStorage.getItem('username');
+            if (username) {
+                document.getElementById('username').textContent = username;
+            }
+
+            // 加载反馈列表
+            loadFeedback();
+        });
+
+        // 模拟反馈数据
+        const mockFeedback = [
+            {
+                id: 1,
+                orderNumber: 'EX20240301001',
+                rating: 5,
+                type: 'service',
+                content: '快递员服务态度非常好，送货速度快，包裹完好无损。',
+                user: '张先生',
+                date: '2024-03-01 14:30'
+            },
+            {
+                id: 2,
+                orderNumber: 'EX20240301002',
+                rating: 4,
+                type: 'speed',
+                content: '配送速度还可以，但是希望能更快一些。',
+                user: '李女士',
+                date: '2024-03-01 15:45'
+            }
+        ];
+
+        // 处理评分按钮点击
+        const ratingButtons = document.querySelectorAll('.rating-btn');
+        let selectedRating = 0;
+
+        ratingButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const rating = parseInt(button.dataset.rating);
+                selectedRating = rating;
+                
+                // 更新按钮样式
+                ratingButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                button.classList.add('active');
+            });
+        });
+
+        // 处理表单提交
+        document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (selectedRating === 0) {
+                alert('请选择服务评分');
+                return;
+            }
+
+            const newFeedback = {
+                id: Date.now(),
+                orderNumber: document.getElementById('orderNumber').value,
+                rating: selectedRating,
+                type: document.getElementById('feedbackType').value,
+                content: document.getElementById('feedbackContent').value,
+                user: localStorage.getItem('username') || '匿名用户',
+                date: new Date().toLocaleString()
+            };
+
+            // 获取现有反馈数据
+            let feedbackList = JSON.parse(localStorage.getItem('feedback')) || mockFeedback;
+            
+            // 添加新反馈
+            feedbackList.unshift(newFeedback);
+            
+            // 保存数据
+            localStorage.setItem('feedback', JSON.stringify(feedbackList));
+
+            // 显示成功消息
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+
+            // 重新加载反馈列表
+            loadFeedback();
+
+            // 重置表单
+            e.target.reset();
+            selectedRating = 0;
+            ratingButtons.forEach(btn => btn.classList.remove('active'));
+
+            // 3秒后隐藏成功消息
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+        });
+
+        // 加载反馈列表
+        function loadFeedback() {
+            const feedbackList = document.getElementById('feedbackList');
+            const feedback = JSON.parse(localStorage.getItem('feedback')) || mockFeedback;
+
+            feedbackList.innerHTML = feedback.map(item => `
+                <div class="feedback-item">
+                    <div class="feedback-header">
+                        <span class="feedback-user">${item.user}</span>
+                        <span class="feedback-date">${item.date}</span>
+                    </div>
+                    <div class="feedback-rating">
+                        评分: ${'★'.repeat(item.rating)}${'☆'.repeat(5-item.rating)}
+                    </div>
+                    <div class="feedback-content">
+                        <strong>订单号:</strong> ${item.orderNumber}<br>
+                        <strong>反馈类型:</strong> ${getFeedbackTypeName(item.type)}<br>
+                        <strong>反馈内容:</strong> ${item.content}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 获取反馈类型名称
+        function getFeedbackTypeName(type) {
+            const types = {
+                'service': '服务态度',
+                'speed': '配送速度',
+                'safety': '包裹安全',
+                'other': '其他'
+            };
+            return types[type] || type;
+        }
+
+        // 退出登录
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html> 
